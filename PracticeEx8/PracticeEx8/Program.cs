@@ -8,101 +8,63 @@ namespace PracticeEx8
 {
     class Program
     {
-        static int ScanNatInt()
+        static void ShowList(List<List<int>> list)
         {
-            bool ok;
-            int buf;
-            do
+            int c = 0;
+            foreach (List<int> element in list)
             {
-                ok = Int32.TryParse(Console.ReadLine(), out buf);
-                if (!ok)
-                    Console.WriteLine("Ошибка ввода! Введите натуральное число.");
-                if (buf <= 0)
+                c++;
+                Console.Write(c + "   ");
+                foreach (int node in element)
                 {
-                    Console.WriteLine("Ошибка ввода! Введите натуральное число.");
-                    ok = false;
+                    Console.Write(node + 1 + " ");
                 }
-            } while (!ok);
-            return buf;
+                Console.Write("\n");
+            }
         }
-        static int ScanInt0()
-        {
-            bool ok;
-            int buf;
-            do
-            {
-                ok = Int32.TryParse(Console.ReadLine(), out buf);
-                if (!ok)
-                    Console.WriteLine("Ошибка ввода! Введите целое число >= 0.");
-                if (buf < 0)
-                {
-                    Console.WriteLine("Ошибка ввода! Введите целое число >= 0.");
-                    ok = false;
-                }
-            } while (!ok);
-            return buf;
-        }
-        static int ScanClique()
-        {
-            bool ok;
-            int buf;
-            do
-            {
-                ok = Int32.TryParse(Console.ReadLine(), out buf);
-                if (!ok)
-                    Console.WriteLine("Ошибка ввода! Введите целое число >= 2.");
-                if (buf < 2)
-                {
-                    Console.WriteLine("Ошибка ввода! Введите целое число >= 2.");
-                    ok = false;
-                }
-            } while (!ok);
-            return buf;
-        }
-        //static int[,] CreateMatrix(int edges, Random rnd, int nodes)
-        //{
-        //    int[,] matrix = new int[edges, 2];
-        //    for (int i = 0; i < edges; i++)
-        //    {
-        //        for (int j = 0; j < 2; j++)
-        //        {
-        //            matrix[i, j] = rnd.Next(1, nodes + 1);
-        //            while (matrix[i,j] == matrix[i, j - 1])
-        //            {
-        //                matrix[i, j] = rnd.Next(1, nodes);
-        //            }
-        //        }
-        //    }
-        //}
         static void Main(string[] args)
         {
-            Console.WriteLine("Здравствуйте!\nВведите количество вершин!: ");
-            int nodes = ScanNatInt();
-            Console.WriteLine("Введите количество ребер: ");
-            int edges = ScanInt0();
-            Console.WriteLine("Введите количество вершин в клике для поиска: ");
-            int clique = ScanClique();
-            if (edges == 0)
+            Random rnd = new Random();
+            int nodes = rnd.Next(1, 10);
+            Console.WriteLine("Количество вершин в графе: {0}.", nodes);
+            int edges = rnd.Next(0, (nodes * nodes - 1) / 2 + 1);
+            Console.WriteLine("Количество ребер в графе: {0}.", edges);
+            int clique;
+            if (edges == 0 || nodes < 2)
             {
-                Console.WriteLine("В заданном графе нет клики длины {0}.", clique);
+                Console.WriteLine("В графе не существует никакой клики.");
+                return;
             }
             else
             {
-                int n = Convert.ToInt32(Console.ReadLine());
-                List<int>[] a = new List<int>[n];
-                for (int i = 0; i < n; i++)
-                {
-                    string[] strings = Console.ReadLine().Split();
-                    a[i] = new List<int>();
-                    for (int j = 0; j < strings.Length; j++)
-                    {
-                        if (strings[j] == "1")
-                        {
-                            Console.WriteLine("{0} {1}", i + 1, j + 1);
-                        }
-                    }
-                }
+                clique = rnd.Next(2, nodes + 1);
+                Console.WriteLine("Длина искомой клики: {0}.", clique);
             }
+            List<List<int>> list = new List<List<int>>();
+            for (int i = 0; i < nodes; i++)
+            {
+                list.Add(new List<int>());
+            }
+            for (int i = 0; i < edges; i++)
+            {
+                int firstNode = -1;
+                int secondNode = -1;
+                while (true)
+                {
+                    bool ok = true;
+                    firstNode = rnd.Next(0, nodes);
+                    secondNode = rnd.Next(0, nodes);
+                    if (firstNode == secondNode || list[firstNode].Contains(secondNode))
+                        ok = false;
+                    if (ok == true)
+                        break;
+                }
+                list[firstNode].Add(secondNode);
+                list[secondNode].Add(firstNode);
+            }
+            Console.WriteLine("Список вершин и ребер выглядит следующим образом: ");
+            ShowList(list);
+            Console.WriteLine();
         }
     }
 }
