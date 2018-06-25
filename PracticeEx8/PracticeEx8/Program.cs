@@ -8,63 +8,76 @@ namespace PracticeEx8
 {
     class Program
     {
-        static void ShowList(List<List<int>> list)
+        static string[] GetNodes(Random rnd)
         {
-            int c = 0;
-            foreach (List<int> element in list)
+            string[] nodes = new string[rnd.Next(2, 10)];
+            for (int i = 0; i < nodes.Length; i++)
             {
-                c++;
-                Console.Write(c + "   ");
-                foreach (int node in element)
-                {
-                    Console.Write(node + 1 + " ");
-                }
-                Console.Write("\n");
+                nodes[i] = ((char)(i + 65)).ToString();
             }
+            return nodes;
         }
+        static string[] GetEdges(Random rnd, string[] nodes)
+        {
+            string edges = "";
+            for (int i = 0; i < nodes.Length; i++)
+            {
+                int curEdgeNumber = rnd.Next(0, nodes.Length - i - 1);
+                string cur = "";
+                for (int j = 0; j < curEdgeNumber; j++)
+                {
+                    int index;
+                    do
+                    {
+                        index = rnd.Next(i, nodes.Length - 1);
+                    } while (cur.Contains(nodes[index]) || nodes[index] == nodes[i]);
+                    cur += nodes[i] + nodes[index] + " ";
+                }
+                edges += cur;
+            }
+            if (edges != "")
+                edges = edges.Remove(edges.Length - 1, 1);
+            string[] resEdges = edges.Split(' ');
+            return resEdges;
+        }
+        //static string[] GetClique(int clique)
+        //{
+            
+        //}
         static void Main(string[] args)
         {
             Random rnd = new Random();
-            int nodes = rnd.Next(1, 10);
-            Console.WriteLine("Количество вершин в графе: {0}.", nodes);
-            int edges = rnd.Next(0, (nodes * nodes - 1) / 2 + 1);
-            Console.WriteLine("Количество ребер в графе: {0}.", edges);
-            int clique;
-            if (edges == 0 || nodes < 2)
-            {
-                Console.WriteLine("В графе не существует никакой клики.");
-                return;
-            }
-            else
-            {
-                clique = rnd.Next(2, nodes + 1);
-                Console.WriteLine("Длина искомой клики: {0}.", clique);
-            }
-            List<List<int>> list = new List<List<int>>();
-            for (int i = 0; i < nodes; i++)
-            {
-                list.Add(new List<int>());
-            }
-            for (int i = 0; i < edges; i++)
-            {
-                int firstNode = -1;
-                int secondNode = -1;
-                while (true)
-                {
-                    bool ok = true;
-                    firstNode = rnd.Next(0, nodes);
-                    secondNode = rnd.Next(0, nodes);
-                    if (firstNode == secondNode || list[firstNode].Contains(secondNode))
-                        ok = false;
-                    if (ok == true)
-                        break;
-                }
-                list[firstNode].Add(secondNode);
-                list[secondNode].Add(firstNode);
-            }
-            Console.WriteLine("Список вершин и ребер выглядит следующим образом: ");
-            ShowList(list);
+            Console.WriteLine("Здравствуйте.\nСгенерированные вершины и ребра выглядят следующим образом: ");
+            string[] nodes = GetNodes(rnd);
+            foreach (string elem in nodes)
+                Console.Write(elem + " ");
             Console.WriteLine();
+            string[] edges = GetEdges(rnd, nodes);
+            foreach (string elem in edges)
+                Console.Write(elem + " ");
+            Console.WriteLine();
+            Console.WriteLine("Введите длину искомой клики: ");
+            bool ok;
+            int clique;
+            do
+            {
+                ok = Int32.TryParse(Console.ReadLine(), out clique);
+                if (!ok || clique <= 1)
+                {
+                    Console.WriteLine("Ошибка ввода! Длина клики - натуральное число не меньше 2!");
+                    ok = false;
+                }
+            } while (!ok);
+            if (clique <= nodes.Length)
+            {
+                int edgesAmount = clique * (clique - 1) / 2;
+                int end;
+                if (clique == 2)
+                    end = edges.Length - 1;
+                else
+                    end = edges.Length - clique;
+
+            }
         }
     }
 }
